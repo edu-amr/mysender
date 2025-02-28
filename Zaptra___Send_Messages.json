@@ -1,0 +1,432 @@
+{
+  "name": "Zaptra - Send Messages",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "={{ $json.file_url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "c5c734f4-459e-4435-8678-e4ac9c3d00c3",
+      "name": "Download CSV",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        -140,
+        540
+      ],
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "fileFormat": "csv",
+        "options": {
+          "delimiter": ","
+        }
+      },
+      "id": "f11886f5-1c25-4b71-a97f-6c0e9797a459",
+      "name": "Import CSV",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "position": [
+        80,
+        540
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0c327223-eef4-497f-9353-94e7371290c1",
+              "name": "user_id",
+              "value": "={{ $json[\"body\"].parseJson().userId }}",
+              "type": "string"
+            },
+            {
+              "id": "93247738-b383-4f57-a7af-f7e09b866463",
+              "name": "campaign_name",
+              "value": "={{ $json[\"body\"].parseJson().name }}",
+              "type": "string"
+            },
+            {
+              "id": "7200bc0b-6591-4e0f-8bc9-5a1bdd5529bb",
+              "name": "time_send",
+              "value": "={{ $json[\"body\"].parseJson().category }}",
+              "type": "string"
+            },
+            {
+              "id": "8d7419df-8f15-4881-b2b6-09c3061f4a6a",
+              "name": "file_url",
+              "value": "={{ $json[\"body\"].parseJson().fileUrl }}",
+              "type": "string"
+            },
+            {
+              "id": "9c055b06-03f5-4686-a0d0-dcdb5661682e",
+              "name": "message",
+              "value": "={{ $json[\"body\"].parseJson().message }}",
+              "type": "string"
+            },
+            {
+              "id": "fe4ef0e8-ebd8-4aea-be93-576b7b58ce4d",
+              "name": "hash",
+              "value": "={{ $json[\"body\"].parseJson().hash }}",
+              "type": "string"
+            },
+            {
+              "id": "f571d9fc-3526-4fd2-934c-21ae6c59693d",
+              "name": "instance_id",
+              "value": "={{ $json[\"body\"].parseJson().instanceId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -360,
+        540
+      ],
+      "id": "cd95a55c-a8ae-49df-8683-7517cc6b2d44",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Edit Fields').item.json.time_send }}",
+                    "rightValue": "lento",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "lento"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e92b73c2-fe12-4db9-8031-3477ac56907c",
+                    "leftValue": "={{ $('Edit Fields').item.json.time_send }}",
+                    "rightValue": "medio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "medio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "5d2819b4-0889-4b54-861a-a6078e2cdbd2",
+                    "leftValue": "={{ $('Edit Fields').item.json.time_send }}",
+                    "rightValue": "rapido",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "rapido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        540,
+        640
+      ],
+      "id": "426ff4bc-295a-41a9-8eba-00949103cfc9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        280
+      ],
+      "id": "d497c64d-244e-4a6a-ba6a-428d914c6d8d",
+      "name": "Lento",
+      "webhookId": "06e51c1f-68e2-4143-b8f3-32e4c7a850b2"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        460
+      ],
+      "id": "f4bb075f-b9f9-4ebc-90b7-ba8b6ffd9337",
+      "name": "Medio",
+      "webhookId": "b2d12f43-1fbe-45e5-832a-8ff3ee4967f2"
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        920,
+        640
+      ],
+      "id": "950e688d-e8cb-48dd-93bd-815ce9376dce",
+      "name": "Rapido",
+      "webhookId": "95a18cbb-80d5-47af-b318-e575ecd4c919"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        540
+      ],
+      "id": "52cc5508-5653-4538-a1bf-5434f03f3d02",
+      "name": "Loop Over Items",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.zaptra.com.br/message/sendText/{{ $('Edit Fields').item.json.instance_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $('Edit Fields').item.json.hash }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.contato }}\",\n  \"text\": \"{{ $('Edit Fields').item.json.message.replaceAll('%nome%', $json.nome) }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1180,
+        620
+      ],
+      "id": "b17db1ff-9cdb-4e8c-a19d-6202d1423f8c",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/zaptra/send",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -580,
+        540
+      ],
+      "id": "c5b20e97-1494-4ef2-b301-4774a57b8f55",
+      "name": "Webhook",
+      "webhookId": "ffb4ab61-4aba-4cb1-90a1-7a8eb1a58a21"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Download CSV": {
+      "main": [
+        [
+          {
+            "node": "Import CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Import CSV": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Download CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Lento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Medio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rapido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lento": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medio": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rapido": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8a2f0b4b-bbc0-439f-a37e-09f3a3b7a45a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "44bb15e2a1749f166151f12a88213c0ab7154614747d168558417552a1a7695d"
+  },
+  "id": "8Ro2B5vkIwWv1Xmw",
+  "tags": []
+}
